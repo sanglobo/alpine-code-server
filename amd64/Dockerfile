@@ -27,7 +27,9 @@ RUN \
    git \
    gnupg \
    nodejs \
-   openssh-client
+   openssh-client \
+   fuse3 \
+   rclone
 
 RUN \
    wget https://github.com/cdr/code-server/releases/download/v$VERSION/code-server-$VERSION-linux-amd64.tar.gz && \
@@ -40,4 +42,4 @@ RUN \
    sed -i 's/"$ROOT\/lib\/node"/node/g'  /usr/lib/code-server/bin/code-server
 
 ENTRYPOINT ["entrypoint-su-exec", "code-server"]
-CMD ["--bind-addr 0.0.0.0:8080"]
+CMD ["--auth none --bind-addr 0.0.0.0:8080"]
