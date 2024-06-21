@@ -1,0 +1,11 @@
+build:
+  docker:
+    web: amd64/Dockerfile
+
+run:
+  web:
+    command: >
+      docker run --device /dev/fuse --cap-add SYS_ADMIN
+      -e PORT=$PORT
+      martinussuherman/alpine:latest
+    
