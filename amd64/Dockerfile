@@ -1,8 +1,5 @@
 FROM martinussuherman/alpine:3.13-amd64-glibc
 
-# Instalar sudo
-RUN apk --no-cache add sudo bash
-
 ENV \
    # container/su-exec UID \
    EUID=1001 \
@@ -19,17 +16,6 @@ ENV \
    # code-server version \
    VERSION=3.12.0
    
-
-# Adicionar o usuário vscode e adicionar ao grupo sudo
-RUN adduser -D -s /bin/bash vscode && \
-    echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
-# Definir permissões corretas
-RUN chown -R vscode:vscode /home/vscode
-
-# Definir diretório de trabalho
-WORKDIR /home/vscode
-
 # Copiar code-server
 COPY code-server /usr/bin/
 RUN chmod +x /usr/bin/code-server
