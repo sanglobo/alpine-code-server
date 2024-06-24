@@ -1,6 +1,6 @@
 FROM martinussuherman/alpine:3.13-amd64-glibc
 
-ENV \
+///ENV \
    # container/su-exec UID \
    EUID=1001 \
    # container/su-exec GID \
@@ -15,6 +15,18 @@ ENV \
    EHOME=/home/vscode \
    # code-server version \
    VERSION=3.12.0
+
+# Adicionar o usuário vscode
+RUN useradd -m -s /bin/bash vscode
+
+# Definir permissões corretas
+RUN chown -R vscode:vscode /home/vscode
+
+USER vscode
+
+# Definir diretório de trabalho
+WORKDIR /home/vscode
+
 
 COPY code-server /usr/bin/
 RUN chmod +x /usr/bin/code-server
