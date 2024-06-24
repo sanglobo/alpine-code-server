@@ -1,9 +1,5 @@
 FROM martinussuherman/alpine:3.13-amd64-glibc
 
-RUN apk update && \
-    apk upgrade && \
-    apk add --no-cache fuse3
-
 
 ENV \
    # container/su-exec UID \
@@ -33,8 +29,6 @@ RUN apk --no-cache --update add \
     gnupg \
     nodejs \
     openssh-client \
-    fuse3 \
-    rclone
 
 RUN wget https://github.com/cdr/code-server/releases/download/v$VERSION/code-server-$VERSION-linux-amd64.tar.gz && \
     tar x -zf code-server-$VERSION-linux-amd64.tar.gz && \
@@ -50,3 +44,8 @@ USER vscode
 
 ENTRYPOINT ["entrypoint-su-exec", "code-server"]
 CMD ["--auth", "none", "--bind-addr", "0.0.0.0:8080"]
+
+
+RUN apk update && \
+    apk upgrade && \
+    apk add --no-cache fuse3 rclone
