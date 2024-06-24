@@ -1,6 +1,6 @@
 FROM martinussuherman/alpine:3.13-amd64-glibc
 
-///ENV \
+#ENV \
    # container/su-exec UID \
    EUID=1001 \
    # container/su-exec GID \
