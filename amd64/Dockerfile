@@ -2,19 +2,19 @@ FROM martinussuherman/alpine:3.13-amd64-glibc
 
 #ENV \
    # container/su-exec UID \
-   EUID=1001 \
+ #  EUID=1001 \
    # container/su-exec GID \
-   EGID=1001 \
+#   EGID=1001 \
    # container/su-exec user name \
-   EUSER=vscode \
+ #  EUSER=vscode \
    # container/su-exec group name \
-   EGROUP=vscode \
+ #  EGROUP=vscode \
    # should user shell set to nologin? (yes/no) \
-   ENOLOGIN=no \
+ #  ENOLOGIN=no \
    # container user home dir \
-   EHOME=/home/vscode \
+ #  EHOME=/home/vscode \
    # code-server version \
-   VERSION=3.12.0
+#   VERSION=3.12.0
 
 # Adicionar o usuário vscode
 RUN useradd -m -s /bin/bash vscode
