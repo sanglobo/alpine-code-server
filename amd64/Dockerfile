@@ -1,44 +1,41 @@
 FROM martinussuherman/alpine:3.13-amd64-glibc
 
- ENV
-# container/su-exec UID
-  EUID=1001
-# container/su-exec GID
-   EGID=1001
-# container/su-exec user name
-  EUSER=vscode
-# container/su-exec group name
-  EGROUP=vscode
-# should user shell set to nologin? (yes/no)
-  ENOLOGIN=no
- container user home dir
-  EHOME=/home/vscode
-# code-server version
-   VERSION=3.12.0
-
-# Adicionar o usuário vscode
-RUN addgroup -S vscode && adduser -S -G vscode -s /bin/bash vscode
-
 # Instalar sudo
-RUN apk --no-cache add sudo
+RUN apk --no-cache add sudo bash
 
-# Permitir que o usuário vscode execute sudo sem senha
-RUN echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+ENV \
+   # container/su-exec UID \
+   EUID=1001 \
+   # container/su-exec GID \
+   EGID=1001 \
+   # container/su-exec user name \
+   EUSER=vscode \
+   # container/su-exec group name \
+   EGROUP=vscode \
+   # should user shell set to nologin? (yes/no) \
+   ENOLOGIN=no \
+   # container user home dir \
+   EHOME=/home/vscode \
+   # code-server version \
+   VERSION=3.12.0
+   
+
+# Adicionar o usuário vscode e adicionar ao grupo sudo
+RUN adduser -D -s /bin/bash vscode && \
+    echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Definir permissões corretas
 RUN chown -R vscode:vscode /home/vscode
 
-USER vscode
-
 # Definir diretório de trabalho
 WORKDIR /home/vscode
 
+# Copiar code-server
 COPY code-server /usr/bin/
 RUN chmod +x /usr/bin/code-server
 
-# Install dependencies
-RUN \
-    apk --no-cache --update add \
+# Instalar dependências
+RUN apk --no-cache --update add \
     bash \
     curl \
     git \
@@ -48,8 +45,7 @@ RUN \
     fuse3 \
     rclone
 
-RUN \
-    wget https://github.com/cdr/code-server/releases/download/v$VERSION/code-server-$VERSION-linux-amd64.tar.gz && \
+RUN wget https://github.com/cdr/code-server/releases/download/v$VERSION/code-server-$VERSION-linux-amd64.tar.gz && \
     tar x -zf code-server-$VERSION-linux-amd64.tar.gz && \
     rm code-server-$VERSION-linux-amd64.tar.gz && \
     rm code-server-$VERSION-linux-amd64/node && \
@@ -58,5 +54,8 @@ RUN \
     mv code-server-$VERSION-linux-amd64 /usr/lib/code-server && \
     sed -i 's/"$ROOT\/lib\/node"/node/g' /usr/lib/code-server/bin/code-server
 
+# Definir o usuário padrão
+USER vscode
+
 ENTRYPOINT ["entrypoint-su-exec", "code-server"]
-CMD ["--auth none --bind-addr 0.0.0.0:8080"]
+CMD ["--auth", "none", "--bind-addr", "0.0.0.0:8080"]
