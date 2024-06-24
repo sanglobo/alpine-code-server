@@ -39,9 +39,7 @@ RUN wget https://github.com/cdr/code-server/releases/download/v$VERSION/code-ser
     mv code-server-$VERSION-linux-amd64 /usr/lib/code-server && \
     sed -i 's/"$ROOT\/lib\/node"/node/g' /usr/lib/code-server/bin/code-server
 
-RUN apk update && \
-    apk upgrade && \
-    apk add --no-cache fuse3 rclone
+RUN apk add --no-cache fuse3 rclone
 
 # Definir o usuário padrão
 USER vscode
