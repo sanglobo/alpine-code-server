@@ -28,7 +28,7 @@ RUN apk --no-cache --update add \
     git \
     gnupg \
     nodejs \
-    openssh-client \
+    openssh-client 
 
 RUN wget https://github.com/cdr/code-server/releases/download/v$VERSION/code-server-$VERSION-linux-amd64.tar.gz && \
     tar x -zf code-server-$VERSION-linux-amd64.tar.gz && \
