@@ -1,5 +1,10 @@
 FROM martinussuherman/alpine:3.13-amd64-glibc
 
+RUN apk update && \
+    apk upgrade && \
+    apk add --no-cache fuse3
+
+
 ENV \
    # container/su-exec UID \
    EUID=1001 \
