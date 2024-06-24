@@ -2,6 +2,7 @@ version: '3'
 
 services:
   code-server:
+    user: root
     build:
       context: .
       dockerfile: ./amd64/Dockerfile
