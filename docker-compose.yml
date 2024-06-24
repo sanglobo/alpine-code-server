@@ -9,7 +9,7 @@ services:
       - EUID=1001
       - EGID=1001
     volumes:
-      - vscode:/home/vscode
+      - /home/vscode:/home/vscode
     ports:
       - 8080:8080
     cap_add:
