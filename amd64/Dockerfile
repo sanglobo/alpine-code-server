@@ -1,57 +1,39 @@
 FROM martinussuherman/alpine:3.13-amd64-glibc
 
-#ENV \
-   # container/su-exec UID \
- #  EUID=1001 \
-   # container/su-exec GID \
-#   EGID=1001 \
-   # container/su-exec user name \
- #  EUSER=vscode \
-   # container/su-exec group name \
- #  EGROUP=vscode \
-   # should user shell set to nologin? (yes/no) \
- #  ENOLOGIN=no \
-   # container user home dir \
- #  EHOME=/home/vscode \
-   # code-server version \
-#   VERSION=3.12.0
+# Definir a versão do code-server
+ENV VERSION=3.12.0
+
+# Instalar dependências
+RUN apk --no-cache --update add \
+    curl \
+    git \
+    gnupg \
+    nodejs \
+    openssh-client \
+    fuse3 \
+    rclone
 
 # Adicionar o usuário vscode
-RUN useradd -m -s /bin/bash vscode
+RUN adduser -D -s /bin/ash vscode
 
 # Definir permissões corretas
 RUN chown -R vscode:vscode /home/vscode
 
-USER vscode
+# Instalar code-server
+RUN wget https://github.com/coder/code-server/releases/download/v$VERSION/code-server-$VERSION-linux-amd64.tar.gz && \
+    tar xzf code-server-$VERSION-linux-amd64.tar.gz && \
+    mv code-server-$VERSION-linux-amd64 /usr/lib/code-server && \
+    ln -s /usr/lib/code-server/bin/code-server /usr/bin/code-server && \
+    rm code-server-$VERSION-linux-amd64.tar.gz && \
+    chmod +x /usr/bin/code-server && \
+    sed -i 's/"$ROOT\/lib\/node"/node/g' /usr/lib/code-server/bin/code-server
 
-# Definir diretório de trabalho
+# Definir o usuário e diretório de trabalho
+USER vscode
 WORKDIR /home/vscode
 
-
-COPY code-server /usr/bin/
-RUN chmod +x /usr/bin/code-server
-
-# Install dependencies
-RUN \
-   apk --no-cache --update add \
-   bash \
-   curl \
-   git \
-   gnupg \
-   nodejs \
-   openssh-client \
-   fuse3 \
-   rclone
-
-RUN \
-   wget https://github.com/cdr/code-server/releases/download/v$VERSION/code-server-$VERSION-linux-amd64.tar.gz && \
-   tar x -zf code-server-$VERSION-linux-amd64.tar.gz && \
-   rm code-server-$VERSION-linux-amd64.tar.gz && \
-   rm code-server-$VERSION-linux-amd64/node && \
-   rm code-server-$VERSION-linux-amd64/code-server && \
-   rm code-server-$VERSION-linux-amd64/lib/node && \
-   mv code-server-$VERSION-linux-amd64 /usr/lib/code-server && \
-   sed -i 's/"$ROOT\/lib\/node"/node/g'  /usr/lib/code-server/bin/code-server
-
+# Expor a porta para o code-server
+EXPOSE 8080
 ENTRYPOINT ["entrypoint-su-exec", "code-server"]
-CMD ["--auth none --bind-addr 0.0.0.0:8080"]
+# Comando padrão para o code-server
+CMD ["code-server", "--bind-addr", "0.0.0.0:8080", "--auth", "none"]
