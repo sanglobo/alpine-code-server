@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  code-server:
+    build:
+      context: .
+      dockerfile: ./amd64/Dockerfile
+    environment:
+      - EUID=1001
+      - EGID=1001
+    volumes:
+      - vscode:/home/vscode
+    ports:
+      - 8080:8080
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - /dev/fuse
+    security_opt:
+      - apparmor:unconfine
+      
