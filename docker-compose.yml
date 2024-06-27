@@ -20,3 +20,18 @@ services:
       - /dev/fuse
     security_opt:
       - apparmor:unconfine
+ rclone:
+    image: mumiehub/rclone-mount
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    devices:
+      - "/dev/fuse:/dev/fuse"
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - "$HOME/.config/rclone/rclone.conf:/config/rclone.conf:ro"
+      - "./config.txt:/config/config.txt:ro"
+      - "./mounts:/mnt:shared"
