@@ -19,8 +19,9 @@ services:
     devices:
       - /dev/fuse
     security_opt:
-      - apparmor:unconfine
- rclone:
+      - apparmor:unconfined
+
+  rclone:
     image: mumiehub/rclone-mount
     cap_add:
       - SYS_ADMIN
@@ -35,3 +36,4 @@ services:
       - "$HOME/.config/rclone/rclone.conf:/config/rclone.conf:ro"
       - "./config.txt:/config/config.txt:ro"
       - "./mounts:/mnt:shared"
+      
